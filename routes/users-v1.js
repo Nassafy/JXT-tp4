@@ -66,34 +66,28 @@ router.post('/', function (req, res, next) {
 router.patch('/:id', function (req, res, next) {
     const id = req.params.id
     const newUserProperties = req.body
+    try {
+        if (id && newUserProperties) {
+            const updated = usersModel.update(id, newUserProperties)
 
-    if (id && newUserProperties) {
-        try {
-            if (id && newUserProperties) {
-                const updated = usersModel.update(id, newUserProperties)
-                res
-                    .status(200)
-                    .json(updated)
-            } else {
-                res
-                    .status(400)
-                    .json({message: `Wrong parameter`})
-            }
-        } catch (exc) {
-            if (exc.message === 'user.not.found') {
-                res
-                    .status(404)
-                    .json({message: `User not found with id ${id}`})
-            } else if (exc.message === 'user.not.valid') {
-                res
-                    .status(400)
-                    .json({message: `Invalid user data`})
-            }
+            res
+                .status(200)
+                .json(updated)
+        } else {
+            res
+                .status(400)
+                .json({message: `Wrong parameter`})
         }
-    } else {
-        res
-            .status(400)
-            .json({message: `Wrong parameters`})
+    } catch (exc) {
+        if (exc.message === 'user.not.found') {
+            res
+                .status(404)
+                .json({message: `User not found with id ${id}`})
+        } else if (exc.message === 'user.not.valid') {
+            res
+                .status(400)
+                .json({message: `Invalid user data`})
+        }
     }
 })
 
